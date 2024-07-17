@@ -1,0 +1,192 @@
+>>>>>> CONNECTED >>>>>
+{
+  "socketId": "QZGbfv0o9N5QrXreAAAF",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:28:05.819Z"
+}
+>>>>>> DATA >>>>>
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"}]
+
+>>>>>> whole ROOMS >>>>>
+>>>>>> DATA >>>>>
+{"cmd":"CLOSE_ROOM","name":"QZGbfv0o9N5QrXreAAAF","map":"I will set it after!"}
+[]
+
+>>>>>> whole ROOMS >>>>>
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"}]
+>>>>>> DATA >>>>>
+
+>>>>>> whole ROOMS >>>>>
+{"cmd":"CLOSE_ROOM","name":"QZGbfv0o9N5QrXreAAAF","map":"I will set it after!"}
+>>>>>> DATA >>>>>
+
+>>>>>> whole ROOMS >>>>>
+[]
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+>>>>>> DATA >>>>>
+
+>>>>>> whole ROOMS >>>>>
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"}]
+{"cmd":"CLOSE_ROOM","name":"QZGbfv0o9N5QrXreAAAF","map":"I will set it after!"}
+[]
+>>>>>> DATA >>>>>
+
+>>>>>> whole ROOMS >>>>>
+>>>>>> DATA >>>>>
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"}]
+
+>>>>>> whole ROOMS >>>>>
+{"cmd":"CLOSE_ROOM","name":"QZGbfv0o9N5QrXreAAAF","map":"I will set it after!"}
+>>>>>> DATA >>>>>
+[]
+
+>>>>>> whole ROOMS >>>>>
+>>>>>> DATA >>>>>
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"}]
+
+>>>>>> whole ROOMS >>>>>
+{"cmd":"CLOSE_ROOM","name":"QZGbfv0o9N5QrXreAAAF","map":"I will set it after!"}
+>>>>>> DATA >>>>>
+
+>>>>>> whole ROOMS >>>>>
+[]
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+>>>>>> DATA >>>>>
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"}]
+
+>>>>>> whole ROOMS >>>>>
+{"cmd":"CLOSE_ROOM","name":"QZGbfv0o9N5QrXreAAAF","map":"I will set it after!"}
+>>>>>> DATA >>>>>
+
+>>>>>> whole ROOMS >>>>>
+[]
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"}]
+>>>>>> DATA >>>>>
+
+>>>>>> whole ROOMS >>>>>
+>>>>>> CONNECTED >>>>>
+{
+  "socketId": "TiKNs5z8UqTcnDf_AAAH",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:28:57.046Z"
+}
+>>>>>> DATA >>>>>
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+
+>>>>>> whole ROOMS >>>>>
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"},{"name":"TiKNs5z8UqTcnDf_AAAH","createdBy":"TiKNs5z8UqTcnDf_AAAH"}]
+>>>>>> CONNECTED >>>>>
+{
+  "socketId": "aeqrUEsvTImsotmoAAAJ",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:29:26.364Z"
+}
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+>>>>>> DATA >>>>>
+
+>>>>>> whole ROOMS >>>>>
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"},{"name":"TiKNs5z8UqTcnDf_AAAH","createdBy":"TiKNs5z8UqTcnDf_AAAH"},{"name":"aeqrUEsvTImsotmoAAAJ","createdBy":"aeqrUEsvTImsotmoAAAJ"}]
+>>>>>> DATA >>>>>
+{"cmd":"CLOSE_ROOM","name":"TiKNs5z8UqTcnDf_AAAH","map":"I will set it after!"}
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"},{"name":"aeqrUEsvTImsotmoAAAJ","createdBy":"aeqrUEsvTImsotmoAAAJ"}]
+
+>>>>>> whole ROOMS >>>>>
+>>>>>> DATA >>>>>
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+
+>>>>>> whole ROOMS >>>>>
+[{"name":"QZGbfv0o9N5QrXreAAAF","createdBy":"QZGbfv0o9N5QrXreAAAF"},{"name":"aeqrUEsvTImsotmoAAAJ","createdBy":"aeqrUEsvTImsotmoAAAJ"},{"name":"TiKNs5z8UqTcnDf_AAAH","createdBy":"TiKNs5z8UqTcnDf_AAAH"}]
+>>>>>> CONNECTED >>>>>
+{
+  "socketId": "U073Qho1yQ5fyvzfAAAB",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:30:12.046Z"
+}
+>>>>>> CONNECTED >>>>>
+{
+  "socketId": "FlDu5xpvoB3LbekcAAAD",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:30:12.201Z"
+}
+>>>>>> CONNECTED >>>>>
+{
+  "socketId": "Zx7AnuhQug3wYsqUAAAB",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:30:15.623Z"
+}
+>>>>>> CONNECTED >>>>>
+{
+  "socketId": "ux5M7R7IOqACUpmoAAAD",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:30:16.076Z"
+}
+>>>>>> CONNECTED >>>>>
+{
+  "socketId": "iJoUe4DdiHDfOAlzAAAC",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:30:54.314Z"
+}
+>>>>>> CONNECTED >>>>>
+{
+  "socketId": "_WvX1DxeTy3EmeExAAAD",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:30:54.324Z"
+}
+>>>>>> CONNECTED >>>>>
+{
+  "socketId": "dsAT7--NFf7NGLaHAAAC",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:30:57.506Z"
+}
+{
+  "socketId": "MJW8_Dj-Ry2YeUXyAAAD",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:30:57.515Z"
+}
+>>>>>> CONNECTED >>>>>
+>>>>>> DATA >>>>>
+{"cmd":"CLOSE_ROOM","name":"QZGbfv0o9N5QrXreAAAF","map":"I will set it after!"}
+
+>>>>>> whole ROOMS >>>>>
+[]
+>>>>>> DATA >>>>>
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+
+>>>>>> whole ROOMS >>>>>
+[{"name":"dsAT7--NFf7NGLaHAAAC","createdBy":"dsAT7--NFf7NGLaHAAAC"}]
+>>>>>> DATA >>>>>
+{"cmd":"CLOSE_ROOM","name":"dsAT7--NFf7NGLaHAAAC","map":"I will set it after!"}
+[]
+
+>>>>>> whole ROOMS >>>>>
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+>>>>>> DATA >>>>>
+
+>>>>>> whole ROOMS >>>>>
+[{"name":"dsAT7--NFf7NGLaHAAAC","createdBy":"dsAT7--NFf7NGLaHAAAC"}]
+{
+  "socketId": "09y1wB4qc-Jjlh_YAAAF",
+  "event": "user_connected",
+  "timestamp": "2024-07-17T17:31:09.518Z"
+}
+>>>>>> CONNECTED >>>>>
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+>>>>>> DATA >>>>>
+[{"name":"dsAT7--NFf7NGLaHAAAC","createdBy":"dsAT7--NFf7NGLaHAAAC"},{"name":"09y1wB4qc-Jjlh_YAAAF","createdBy":"09y1wB4qc-Jjlh_YAAAF"}]
+
+>>>>>> whole ROOMS >>>>>
+>>>>>> DATA >>>>>
+{"cmd":"CLOSE_ROOM","name":"09y1wB4qc-Jjlh_YAAAF","map":"I will set it after!"}
+[{"name":"dsAT7--NFf7NGLaHAAAC","createdBy":"dsAT7--NFf7NGLaHAAAC"}]
+
+>>>>>> whole ROOMS >>>>>
+>>>>>> DATA >>>>>
+{"cmd":"CREATE_ROOM","map":"I will set it after!"}
+
+>>>>>> whole ROOMS >>>>>
+[{"name":"dsAT7--NFf7NGLaHAAAC","createdBy":"dsAT7--NFf7NGLaHAAAC"},{"name":"09y1wB4qc-Jjlh_YAAAF","createdBy":"09y1wB4qc-Jjlh_YAAAF"}]
