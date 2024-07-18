@@ -26,13 +26,18 @@ io.on('connection', (socket) => {
         fs.appendFile('log.txt', dataString + '\n', (err) => { });
 
         let data = JSON.parse(dataString);
+        let index;
 
         switch (data.cmd) {
             case "CREATE_ROOM":
                 console.log(JSON.stringify({ cmd: "ROOM_CREATED", msg: socket.id + " is Created!" }));
 
                 // Add room information to the rooms array
-                rooms.push({ name: socket.id, createdBy: socket.id });
+                // Name : ROOM_Name : socket.id is the room name for the test
+                // Player1 : The guy who create the room :: will add the name of the player but now socket.id for test
+                // Player2 : The guy who would like to join.
+                // Map : The map to be used on the MULTI-players
+                rooms.push({ name: socket.id, player1: socket.id, player2: undefined, map: data.map });
                 console.log("ADDED to the rooms list !!");
                 console.log(rooms);
 
@@ -40,7 +45,7 @@ io.on('connection', (socket) => {
                 break;
             case "CLOSE_ROOM":
                 // Find the room index in the array
-                const index = rooms.findIndex(room => room.name === data.name);
+                index = rooms.findIndex(room => room.name === data.name);
                 if (index !== -1) {
                     // Remove the room from the array
                     rooms.splice(index, 1);
@@ -49,6 +54,46 @@ io.on('connection', (socket) => {
                 }
 
                 socket.emit('message', { cmd: "ROOM_CLOSED", msg: data.name + " is Closed!" });
+                break;
+
+            case "GET_SERVERS":
+
+                console.log("####################");
+                console.log("I will return servers :", rooms);
+
+                socket.emit('ROOM', { cmd: "GOT_SERVERS", servers: rooms });
+
+                break;
+
+            case "JOIN_GAME":
+                index = rooms.findIndex(room => room.name === data.name);
+
+                if (index != -1) {
+                    // Add the second player to the new joiner
+                    rooms[index].player2 = socket.id;
+
+                    console.log("Second player added !!");
+                    console.log(rooms);
+
+                    const player1Socket = io.sockets.sockets.get(rooms[index].player1);
+                    console.log("Who is the player 1 ? ", player1Socket.id);
+                    if (player1Socket) {
+
+                        console.log("Send msg to the player1");
+                        player1Socket.emit("ROOM", {
+                            cmd : 'GOT_JOINED',
+                            name : rooms[index].name,
+                            msg: "player1 : " + rooms[index].player1 + " player2 : " + rooms[index].player2,
+                            globalMap: rooms[index].map
+                        });
+                    }
+
+                    socket.emit("ROOM", {
+                        cmd: 'GOT_JOINED', msg: "player1 : " + rooms[index].player1 + " player2 : " + rooms[index].player2,
+                        globalMap: rooms[index].map
+                    });
+                }
+
                 break;
             default:
                 // Handle any other commands here
