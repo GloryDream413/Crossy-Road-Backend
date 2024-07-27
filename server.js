@@ -25,15 +25,12 @@
  *                                                                                                                                                     *
  ********************************************************************** The Road to Valhalla! *********************************************************
  */
-
 // Sample Libraries
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-
 // Personal informations
 const rooms = [];
-
 // Global variables : MBC-on mobile responsive
 const app = express();
 const server = http.createServer(app);
@@ -42,25 +39,19 @@ const io = socketIo(server, {
         origin: '*'
     }
 });
-
 io.on('connection', (socket) => {
-
     socket.on('message', (dataString) => {
         let data = JSON.parse(dataString);
         let index;
-
         switch (data.cmd) {
             case "CREATE_ROOM":
-
                 // Add room information to the rooms array
                 // Name : ROOM_Name : socket.id is the room name for the test
                 // Player1 : The guy who create the room :: will add the name of the player but now socket.id for test
                 // Player2 : The guy who would like to join.
                 // Map : The map to be used on the MULTI-players
                 // Status : 0 : No play, 1 : Someone Joined, 2 : Playing now...
-
                 console.log("Creating Room with userName : ", data.player1);
-
                 rooms.push({
                     name: socket.id,
                     player1: data.player1, player1_id: socket.id,
@@ -68,7 +59,6 @@ io.on('connection', (socket) => {
                     status: 0,
                     map: data.map
                 });
-
                 socket.emit('message', { cmd: "ROOM_CREATED", name: socket.id });
                 break;
             case "CLOSE_ROOM":
@@ -79,7 +69,6 @@ io.on('connection', (socket) => {
                 }
                 socket.emit('message', { cmd: "ROOM_CLOSED", msg: data.name + " is Closed!" });
                 break;
-
             case "GET_SERVERS":
                 const ret_servers = [];
                 for (let i = 0; i < rooms.length; i++) {
@@ -89,14 +78,11 @@ io.on('connection', (socket) => {
                         cur.mine = true;
                     ret_servers.push(cur);
                 }
-
                 socket.emit('ROOM', { cmd: "GOT_SERVERS", servers: ret_servers });
                 break;
-
             case "START_GAME":
                 console.log("Request of start_game___________________:", socket.id);
                 console.log("data : ", data);
-
                 if (data.role == 'server') {
                     index = rooms.findIndex(room => room.name === socket.id);
                     if (index !== -1) {
@@ -114,7 +100,6 @@ io.on('connection', (socket) => {
                 //     index = rooms.findIndex(room => room.player2 === socket.id);
                 //     if (index !== -1) {
                 //         console.log(data);
-
                 //         const otherPlayer = io.sockets.sockets.get(rooms[index].player1);
                 //         // console.log("other : ", otherPlayer);
                 //         if (otherPlayer) {
@@ -124,11 +109,9 @@ io.on('connection', (socket) => {
                 //     }
                 // }
                 break;
-
             case "PLAY_GAME":
                 console.log("Request of play_game___________________:", socket.id);
                 console.log("data : ", data);
-
                 if (data.role == 'server') {
                     index = rooms.findIndex(room => room.name === socket.id);
                     if (index !== -1) {
@@ -148,7 +131,6 @@ io.on('connection', (socket) => {
                 //     index = rooms.findIndex(room => room.player2 === socket.id);
                 //     if (index !== -1) {
                 //         console.log(data);
-
                 //         const otherPlayer = io.sockets.sockets.get(rooms[index].player1);
                 //         // console.log("other : ", otherPlayer);
                 //         if (otherPlayer) {
@@ -157,20 +139,13 @@ io.on('connection', (socket) => {
                 //         socket.emit("START_PLAY_GAME_APPROVED", { msg: "Start Game ! OK !" });
                 //     }
                 // }
-
                 break;
-
             case "MOVE_PERSON":
-
                 if (data.role == 'server') {
                     index = rooms.findIndex(room => room.name === socket.id);
-
                     console.log("GOOD!!!", data);
-
                     console.log({ direction: data.direction, role: data.role, align: data.align });
-
                     let opRole = data.role == 'server' ? 'client' : 'server';
-
                     if (index != -1) {
                         socket.emit("MOVE_PERSON_APPROVED", { direction: data.direction, role: data.role, align: data.align });
                         if (rooms[index].player2) {
@@ -182,11 +157,9 @@ io.on('connection', (socket) => {
                 } else if (data.role == 'client') {
                     // index of the second player
                     index = rooms.findIndex(room => room.player2_id === socket.id);
-
                     console.log("GOOD!!!", data);
                     console.log({ direction: data.direction, role: data.role, align: data.align });
                     let opRole = data.role == 'server' ? 'client' : 'server';
-
                     if (index != -1) {
                         socket.emit("MOVE_PERSON_APPROVED", { direction: data.direction, role: data.role, align: data.align });
                         if (rooms[index].player2) {
@@ -196,22 +169,15 @@ io.on('connection', (socket) => {
                         }
                     }
                 }
-
-
                 break;
-
-
             case "JOIN_GAME":
                 index = rooms.findIndex(room => room.name === data.name);
-
                 if (rooms[index].status == 0) {
-
                     if (index != -1) {
                         // Player2 Joined the Game.
                         rooms[index].status = 1;
                         rooms[index].player2 = data.player2;
                         rooms[index].player2_id = socket.id;
-
                         const player1Socket = io.sockets.sockets.get(rooms[index].player1_id);
                         if (player1Socket) {
                             player1Socket.emit("ROOM", {
@@ -223,7 +189,6 @@ io.on('connection', (socket) => {
                                 player2: rooms[index].player2,
                             });
                         }
-
                         socket.emit("ROOM", {
                             state : true,
                             cmd: 'GOT_JOINED_TO_CLIENT',
@@ -233,10 +198,8 @@ io.on('connection', (socket) => {
                             player2: rooms[index].player2,
                         });
                         rooms[index].status = 1;
-
                         console.log("Joined:", rooms[index]);
                     }
-
                 }
                 else {
                     socket.emit("ROOM", {
@@ -246,32 +209,22 @@ io.on('connection', (socket) => {
                     });
                 }
                 break;
-
             case "MOVE_PERSON":
                 index = rooms.findIndex(room => room.name === socket.id);
-
                 console.log("Let's move : ", data);
-
                 break;
-
-
             case "END_ROOM":
-
                 console.log("End_Room :", data);
-
                 index = rooms.findIndex(room => room.name === socket.id);
                 // If server click the end room.
                 if (index != -1) {
-
                     if (rooms[index].player2 != undefined) {
                         const otherPlayer = io.sockets.sockets.get(rooms[index].player2_id);
                         otherPlayer.emit("END_ROOM", {
                             who: 'server'
                         });
                     }
-
                     rooms.splice(index, 1);
-
                     socket.emit("END_ROOM", {
                         who: 'server'
                     });
@@ -279,84 +232,64 @@ io.on('connection', (socket) => {
                     console.log("Client quits the room");
                     // When the client would like to quit from the room
                     index = rooms.findIndex(room => room.player2_id === socket.id);
-
                     if (index != -1) {
-
                         rooms[index].player2 = undefined;
                         rooms[index].player2_id = undefined;
                         rooms[index].status = 0;
-
                         console.log("say server that client quits");
                         const otherPlayer = io.sockets.sockets.get(rooms[index].player1_id);
                         otherPlayer.emit("END_ROOM", {
                             who: 'client'
                         })
-
                         console.log("say client that server kicked you");
                         socket.emit("END_ROOM", {
                             who: 'server'
                         });
                     }
-
                 }
                 break;
-
             case "END_GAME":
-
                 console.log("End_Game :", data);
-
                 index = rooms.findIndex(room => room.name === socket.id);
                 // If server click the end game.
                 if (index != -1) {
-
                     if (rooms[index].player2 != undefined) {
                         const otherPlayer = io.sockets.sockets.get(rooms[index].player2_id);
                         otherPlayer.emit("ROOM", {
                             cmd: 'END_GAME'
                         });
                     }
-
                     // rooms[index].player2 = undefined;
                     rooms[index].status = 1;
                     // rooms.splice(index, 1);
-
                     socket.emit("ROOM", {
                         cmd: 'END_GAME'
                     });
-
                 }
                 // else {
                 //     index = rooms.findIndex(room => room.player2 === socket.id);
                 //     // Client end game
                 //     if (index != -1) {
-
                 //         if (rooms[index].player1 != undefined) {
                 //             const otherPlayer = io.sockets.sockets.get(rooms[index].player1);
-
                 //             otherPlayer.emit("ROOM", {
                 //                 cmd: 'END_GAME'
                 //             });
                 //         }
-
                 //         rooms[index].player2 = undefined;
                 //         rooms[index].status = 0;
-
                 //         socket.emit("ROOM", {
                 //             cmd: 'END_GAME'
                 //         });
                 //     }
                 // }
-
                 break;
-
             default:
                 // Handle any other commands here
                 console.log("Unknown command: " + data.cmd);
                 break;
         }
-
     });
-
     socket.on('disconnect', () => {
         const index = rooms.findIndex(room => room.player1 === socket.id || room.player2 === socket.id);
         if (index !== -1) {
@@ -365,7 +298,6 @@ io.on('connection', (socket) => {
         }
     });
 });
-
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
