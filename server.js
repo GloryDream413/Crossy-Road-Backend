@@ -66,8 +66,7 @@ io.on('connection', (socket) => {
                     player1: data.player1, player1_id: socket.id,
                     player2: undefined, player2_id: undefined,
                     status: 0,
-                    // MBC--
-                    // map: data.map
+                    map: data.map
                 });
 
                 socket.emit('message', { cmd: "ROOM_CREATED", name: socket.id });
@@ -94,32 +93,70 @@ io.on('connection', (socket) => {
                 socket.emit('ROOM', { cmd: "GOT_SERVERS", servers: ret_servers });
                 break;
 
-            // Temporary code to start, you have to modify according to the roomName
-            case "START_PLAY_GAME":
+            case "START_GAME":
+                console.log("Request of start_game___________________:", socket.id);
+                console.log("data : ", data);
+
                 if (data.role == 'server') {
                     index = rooms.findIndex(room => room.name === socket.id);
                     if (index !== -1) {
                         console.log(data);
-                        const otherPlayer = io.sockets.sockets.get(rooms[index].player2);
+                        const otherPlayer = io.sockets.sockets.get(rooms[index].player2_id);
                         // console.log("other : ", otherPlayer);
                         if (otherPlayer) {
-                            otherPlayer.emit("START_PLAY_GAME_APPROVED", { msg: "Start Game ! OK !" });
+                            otherPlayer.emit("ROOM", { cmd: "START_GAME_APPROVED" });
                         }
-                        socket.emit("START_PLAY_GAME_APPROVED", { msg: "Start Game ! OK !" });
-                    }
-                } else if (data.role == 'client') {
-                    index = rooms.findIndex(room => room.player2 === socket.id);
-                    if (index !== -1) {
-                        console.log(data);
-
-                        const otherPlayer = io.sockets.sockets.get(rooms[index].player1);
-                        // console.log("other : ", otherPlayer);
-                        if (otherPlayer) {
-                            otherPlayer.emit("START_PLAY_GAME_APPROVED", { msg: "Start Game ! OK !" });
-                        }
-                        socket.emit("START_PLAY_GAME_APPROVED", { msg: "Start Game ! OK !" });
+                        socket.emit("ROOM", { cmd: "START_GAME_APPROVED" });
                     }
                 }
+                // MBC-if the starting strategy changed
+                // else if (data.role == 'client') {
+                //     index = rooms.findIndex(room => room.player2 === socket.id);
+                //     if (index !== -1) {
+                //         console.log(data);
+
+                //         const otherPlayer = io.sockets.sockets.get(rooms[index].player1);
+                //         // console.log("other : ", otherPlayer);
+                //         if (otherPlayer) {
+                //             otherPlayer.emit("START_GAME_APPROVED", { msg: "Start Game ! OK !" });
+                //         }
+                //         socket.emit("START_GAME_APPROVED", { msg: "Start Game ! OK !" });
+                //     }
+                // }
+                break;
+
+            case "PLAY_GAME":
+                console.log("Request of play_game___________________:", socket.id);
+                console.log("data : ", data);
+
+                if (data.role == 'server') {
+                    index = rooms.findIndex(room => room.name === socket.id);
+                    if (index !== -1) {
+                        console.log(data);
+                        const otherPlayer = io.sockets.sockets.get(rooms[index].player2_id);
+                        // console.log("other : ", otherPlayer);
+                        if (otherPlayer) {
+                            otherPlayer.emit("PLAY_GAME_APPROVED", { role: 'client' });
+                            console.log("Sent to the other player: client");
+                        }
+                        socket.emit("PLAY_GAME_APPROVED", { role: data.role });
+                        console.log("Sent to the server:", data.role);
+                    }
+                }
+                // MBC-if the starting strategy changed
+                // else if (data.role == 'client') {
+                //     index = rooms.findIndex(room => room.player2 === socket.id);
+                //     if (index !== -1) {
+                //         console.log(data);
+
+                //         const otherPlayer = io.sockets.sockets.get(rooms[index].player1);
+                //         // console.log("other : ", otherPlayer);
+                //         if (otherPlayer) {
+                //             otherPlayer.emit("START_PLAY_GAME_APPROVED", { msg: "Start Game ! OK !" });
+                //         }
+                //         socket.emit("START_PLAY_GAME_APPROVED", { msg: "Start Game ! OK !" });
+                //     }
+                // }
 
                 break;
 
@@ -129,32 +166,31 @@ io.on('connection', (socket) => {
                     index = rooms.findIndex(room => room.name === socket.id);
 
                     console.log("GOOD!!!", data);
-                    socket.emit("MOVE_PERSON_APPROVED", { direction: data.direction, role: data.role, align: data.align });
 
                     console.log({ direction: data.direction, role: data.role, align: data.align });
 
                     let opRole = data.role == 'server' ? 'client' : 'server';
 
                     if (index != -1) {
+                        socket.emit("MOVE_PERSON_APPROVED", { direction: data.direction, role: data.role, align: data.align });
                         if (rooms[index].player2) {
-                            const otherPlayer = io.sockets.sockets.get(rooms[index].player2);
+                            const otherPlayer = io.sockets.sockets.get(rooms[index].player2_id);
                             otherPlayer.emit("MOVE_PERSON_APPROVED", { direction: data.direction, role: opRole, align: data.align });
                             console.log({ direction: data.direction, role: opRole, align: data.align });
                         }
                     }
                 } else if (data.role == 'client') {
-                    index = rooms.findIndex(room => room.player2 === socket.id);
+                    // index of the second player
+                    index = rooms.findIndex(room => room.player2_id === socket.id);
 
                     console.log("GOOD!!!", data);
-                    socket.emit("MOVE_PERSON_APPROVED", { direction: data.direction, role: data.role, align: data.align });
-
                     console.log({ direction: data.direction, role: data.role, align: data.align });
-
                     let opRole = data.role == 'server' ? 'client' : 'server';
 
                     if (index != -1) {
+                        socket.emit("MOVE_PERSON_APPROVED", { direction: data.direction, role: data.role, align: data.align });
                         if (rooms[index].player2) {
-                            const otherPlayer = io.sockets.sockets.get(rooms[index].player1);
+                            const otherPlayer = io.sockets.sockets.get(rooms[index].player1_id);
                             otherPlayer.emit("MOVE_PERSON_APPROVED", { direction: data.direction, role: opRole, align: data.align });
                             console.log({ direction: data.direction, role: opRole, align: data.align });
                         }
@@ -168,36 +204,47 @@ io.on('connection', (socket) => {
             case "JOIN_GAME":
                 index = rooms.findIndex(room => room.name === data.name);
 
-                if (index != -1) {
-                    // Player2 Joined the Game.
-                    rooms[index].status = 1;
-                    rooms[index].player2 = data.player2;
-                    rooms[index].player2_id = socket.id;
+                if (rooms[index].status == 0) {
 
-                    const player1Socket = io.sockets.sockets.get(rooms[index].player1_id);
-                    if (player1Socket) {
-                        player1Socket.emit("ROOM", {
-                            cmd: 'GOT_JOINED_TO_SERVER',
-                            name: rooms[index].name,
+                    if (index != -1) {
+                        // Player2 Joined the Game.
+                        rooms[index].status = 1;
+                        rooms[index].player2 = data.player2;
+                        rooms[index].player2_id = socket.id;
+
+                        const player1Socket = io.sockets.sockets.get(rooms[index].player1_id);
+                        if (player1Socket) {
+                            player1Socket.emit("ROOM", {
+                                cmd: 'GOT_JOINED_TO_SERVER',
+                                name: rooms[index].name,
+                                globalMap: rooms[index].map,
+                                role: 'server',
+                                player1: rooms[index].player1,
+                                player2: rooms[index].player2,
+                            });
+                        }
+
+                        socket.emit("ROOM", {
+                            state : true,
+                            cmd: 'GOT_JOINED_TO_CLIENT',
                             globalMap: rooms[index].map,
-                            role: 'server',
+                            role: 'client',
                             player1: rooms[index].player1,
                             player2: rooms[index].player2,
                         });
+                        rooms[index].status = 1;
+
+                        console.log("Joined:", rooms[index]);
                     }
 
+                }
+                else {
                     socket.emit("ROOM", {
                         cmd: 'GOT_JOINED_TO_CLIENT',
-                        globalMap: rooms[index].map,
-                        role: 'client',
-                        player1: rooms[index].player1,
-                        player2: rooms[index].player2,
+                        state : false,
+                        reason : 'Other player joined'
                     });
-                    rooms[index].status = 1;
-
-                    console.log("Joined:", rooms[index]);
                 }
-
                 break;
 
             case "MOVE_PERSON":
@@ -207,52 +254,98 @@ io.on('connection', (socket) => {
 
                 break;
 
-            case "END_GAME":
+
+            case "END_ROOM":
+
+                console.log("End_Room :", data);
 
                 index = rooms.findIndex(room => room.name === socket.id);
-
-                console.log(rooms);
-
-                // Server end game
+                // If server click the end room.
                 if (index != -1) {
 
                     if (rooms[index].player2 != undefined) {
-                        const otherPlayer = io.sockets.sockets.get(rooms[index].player2);
+                        const otherPlayer = io.sockets.sockets.get(rooms[index].player2_id);
+                        otherPlayer.emit("END_ROOM", {
+                            who: 'server'
+                        });
+                    }
 
+                    rooms.splice(index, 1);
+
+                    socket.emit("END_ROOM", {
+                        who: 'server'
+                    });
+                } else {
+                    console.log("Client quits the room");
+                    // When the client would like to quit from the room
+                    index = rooms.findIndex(room => room.player2_id === socket.id);
+
+                    if (index != -1) {
+
+                        rooms[index].player2 = undefined;
+                        rooms[index].player2_id = undefined;
+                        rooms[index].status = 0;
+
+                        console.log("say server that client quits");
+                        const otherPlayer = io.sockets.sockets.get(rooms[index].player1_id);
+                        otherPlayer.emit("END_ROOM", {
+                            who: 'client'
+                        })
+
+                        console.log("say client that server kicked you");
+                        socket.emit("END_ROOM", {
+                            who: 'server'
+                        });
+                    }
+
+                }
+                break;
+
+            case "END_GAME":
+
+                console.log("End_Game :", data);
+
+                index = rooms.findIndex(room => room.name === socket.id);
+                // If server click the end game.
+                if (index != -1) {
+
+                    if (rooms[index].player2 != undefined) {
+                        const otherPlayer = io.sockets.sockets.get(rooms[index].player2_id);
                         otherPlayer.emit("ROOM", {
                             cmd: 'END_GAME'
                         });
                     }
 
-                    rooms[index].player2 = undefined;
-                    rooms[index].status = 0;
+                    // rooms[index].player2 = undefined;
+                    rooms[index].status = 1;
                     // rooms.splice(index, 1);
 
                     socket.emit("ROOM", {
                         cmd: 'END_GAME'
                     });
 
-                } else {
-                    index = rooms.findIndex(room => room.player2 === socket.id);
-                    // Client end game
-                    if (index != -1) {
-
-                        if (rooms[index].player1 != undefined) {
-                            const otherPlayer = io.sockets.sockets.get(rooms[index].player1);
-
-                            otherPlayer.emit("ROOM", {
-                                cmd: 'END_GAME'
-                            });
-                        }
-
-                        rooms[index].player2 = undefined;
-                        rooms[index].status = 0;
-
-                        socket.emit("ROOM", {
-                            cmd: 'END_GAME'
-                        });
-                    }
                 }
+                // else {
+                //     index = rooms.findIndex(room => room.player2 === socket.id);
+                //     // Client end game
+                //     if (index != -1) {
+
+                //         if (rooms[index].player1 != undefined) {
+                //             const otherPlayer = io.sockets.sockets.get(rooms[index].player1);
+
+                //             otherPlayer.emit("ROOM", {
+                //                 cmd: 'END_GAME'
+                //             });
+                //         }
+
+                //         rooms[index].player2 = undefined;
+                //         rooms[index].status = 0;
+
+                //         socket.emit("ROOM", {
+                //             cmd: 'END_GAME'
+                //         });
+                //     }
+                // }
 
                 break;
 
