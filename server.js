@@ -172,8 +172,8 @@ io.on('connection', (socket) => {
                 break;
             case "JOIN_GAME":
                 index = rooms.findIndex(room => room.name === data.name);
-                if (rooms[index].status == 0) {
-                    if (index != -1) {
+                if (index != -1) {
+                    if (rooms[index].status == 0) {
                         // Player2 Joined the Game.
                         rooms[index].status = 1;
                         rooms[index].player2 = data.player2;
@@ -190,7 +190,7 @@ io.on('connection', (socket) => {
                             });
                         }
                         socket.emit("ROOM", {
-                            state : true,
+                            state: true,
                             cmd: 'GOT_JOINED_TO_CLIENT',
                             globalMap: rooms[index].map,
                             role: 'client',
@@ -204,8 +204,8 @@ io.on('connection', (socket) => {
                 else {
                     socket.emit("ROOM", {
                         cmd: 'GOT_JOINED_TO_CLIENT',
-                        state : false,
-                        reason : 'Other player joined'
+                        state: false,
+                        reason: 'Other player joined'
                     });
                 }
                 break;
@@ -220,9 +220,11 @@ io.on('connection', (socket) => {
                 if (index != -1) {
                     if (rooms[index].player2 != undefined) {
                         const otherPlayer = io.sockets.sockets.get(rooms[index].player2_id);
-                        otherPlayer.emit("END_ROOM", {
-                            who: 'server'
-                        });
+                        if (otherPlayer) {
+                            otherPlayer.emit("END_ROOM", {
+                                who: 'server'
+                            });
+                        }
                     }
                     rooms.splice(index, 1);
                     socket.emit("END_ROOM", {
