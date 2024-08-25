@@ -44,7 +44,12 @@ io.on('connection', (socket) => {
         let data = JSON.parse(dataString);
         let index;
         switch (data.cmd) {
-            case "CREATE_ROOM":
+            /*
+                cmd: 'ACTION_CREATE_ROOM',
+                player1: cUserName,
+                map: globalMap
+            */
+            case "ACTION_CREATE_ROOM":
                 // Add room information to the rooms array
                 // Name : ROOM_Name : socket.id is the room name for the test
                 // Player1 : The guy who create the room :: will add the name of the player but now socket.id for test
@@ -52,6 +57,16 @@ io.on('connection', (socket) => {
                 // Map : The map to be used on the MULTI-players
                 // Status : 0 : No play, 1 : Someone Joined, 2 : Playing now...
                 console.log("Creating Room with userName : ", data.player1);
+                index = rooms.findIndex(room => room.player1 === data.player1);
+
+                console.log(index);
+
+                // MBC - This logic is for test
+                if (index != -1) {
+                    // socket.emit('ROOM', { cmd: "SIGNAL_ROOM_CREATED", status : false, msg : "You already created room !" });
+                    rooms.splice(index, 1);
+                }
+
                 rooms.push({
                     name: socket.id,
                     player1: data.player1, player1_id: socket.id,
@@ -59,8 +74,82 @@ io.on('connection', (socket) => {
                     status: 0,
                     map: data.map
                 });
-                socket.emit('message', { cmd: "ROOM_CREATED", name: socket.id });
+                socket.emit('ROOM', {
+                    cmd: "SIGNAL_ROOM_CREATED",
+                    status: true,
+                    name: socket.id,
+                    players: [{
+                        player_name: data.player1,
+                        player_id: socket.id,
+                        player_state: 1
+                    }, {
+                        player_name: undefined,
+                        player_id: undefined,
+                        player_state: 0
+                    }]
+                });
                 break;
+
+            /*
+                cmd: 'ACTION_JOIN_GAME',
+                name: serverId,
+                player2: userName
+            */
+            case "ACTION_JOIN_GAME":
+                console.log("Joing game", data);
+                // Finding the room
+                index = rooms.findIndex(room => room.name === data.name);
+                // If room exists
+                if (index != -1) {
+                    // If game not started
+                    if (rooms[index].status == 0) {
+                        // Player2 Joined the Game : state to JOIN
+                        rooms[index].status = 1;
+                        rooms[index].player2 = data.player2;
+                        rooms[index].player2_id = socket.id;
+
+                        const player1Socket = io.sockets.sockets.get(rooms[index].player1_id);
+                        // Notice Server
+                        if (player1Socket) {
+                            player1Socket.emit("ROOM", {
+                                status: true,
+                                cmd: 'SIGNAL_ROOM_JOINED',
+                                name: rooms[index].name,
+                                globalMap: rooms[index].map,
+                                role: 'server',
+                                players: [
+                                    { player_name: rooms[index].player1, player_id: rooms[index].player1_id, player_state: 1 },
+                                    { player_name: rooms[index].player2, player_id: rooms[index].player2_id, player_state: 1 }
+                                ]
+                            });
+                        }
+
+                        // Notice Client
+                        socket.emit("ROOM", {
+                            status: true,
+                            cmd: 'SIGNAL_ROOM_JOINED',
+                            globalMap: rooms[index].map,
+                            role: 'client',
+                            players: [
+                                { player_name: rooms[index].player1, player_id: rooms[index].player1_id, player_state: 1 },
+                                { player_name: rooms[index].player2, player_id: rooms[index].player2_id, player_state: 1 }
+                            ]
+                        });
+                        rooms[index].status = 1;
+                        console.log("Joined:", rooms[index]);
+                    }
+                }
+                else {
+                    console.log("No ROOM with that name :",data);
+                    // Notice Client
+                    socket.emit("ROOM", {
+                        cmd: 'SIGNAL_ROOM_JOINED',
+                        status: false,
+                        msg: "Invalid link, please check your link."
+                    });
+                }
+                break;
+
             case "CLOSE_ROOM":
                 // Find the room index in the array
                 index = rooms.findIndex(room => room.name === data.name);
@@ -170,45 +259,7 @@ io.on('connection', (socket) => {
                     }
                 }
                 break;
-            case "JOIN_GAME":
-                index = rooms.findIndex(room => room.name === data.name);
-                if (index != -1) {
-                    if (rooms[index].status == 0) {
-                        // Player2 Joined the Game.
-                        rooms[index].status = 1;
-                        rooms[index].player2 = data.player2;
-                        rooms[index].player2_id = socket.id;
-                        const player1Socket = io.sockets.sockets.get(rooms[index].player1_id);
-                        if (player1Socket) {
-                            player1Socket.emit("ROOM", {
-                                cmd: 'GOT_JOINED_TO_SERVER',
-                                name: rooms[index].name,
-                                globalMap: rooms[index].map,
-                                role: 'server',
-                                player1: rooms[index].player1,
-                                player2: rooms[index].player2,
-                            });
-                        }
-                        socket.emit("ROOM", {
-                            state: true,
-                            cmd: 'GOT_JOINED_TO_CLIENT',
-                            globalMap: rooms[index].map,
-                            role: 'client',
-                            player1: rooms[index].player1,
-                            player2: rooms[index].player2,
-                        });
-                        rooms[index].status = 1;
-                        console.log("Joined:", rooms[index]);
-                    }
-                }
-                else {
-                    socket.emit("ROOM", {
-                        cmd: 'GOT_JOINED_TO_CLIENT',
-                        state: false,
-                        reason: 'Other player joined'
-                    });
-                }
-                break;
+
             case "MOVE_PERSON":
                 index = rooms.findIndex(room => room.name === socket.id);
                 console.log("Let's move : ", data);
@@ -293,10 +344,55 @@ io.on('connection', (socket) => {
         }
     });
     socket.on('disconnect', () => {
-        const index = rooms.findIndex(room => room.player1 === socket.id || room.player2 === socket.id);
+        console.log("Someone disconnected !");
+        let index = rooms.findIndex(room => room.player1_id === socket.id);
+        // Server disconnected
+        console.log(rooms);
         if (index !== -1) {
+            // Notice client
+
+            const player2Socket = io.sockets.sockets.get(rooms[index].player2_id);
+            // Notice Server
+            if (player2Socket) {
+                player2Socket.emit("ROOM", {
+                    status: true,
+                    cmd: 'SIGNAL_ROOM_JOINED',
+                    role: 'client',
+                    players: [
+                        { player_name: undefined, player_id: undefined, player_state: 0 },
+                        { player_name: undefined, player_id: undefined, player_state: 0 }
+                    ]
+                });
+            }
+
             rooms.splice(index, 1);
-            console.log(rooms);
+            console.log("removed the room");
+        }
+        index = rooms.findIndex(room => room.player2_id === socket.id);
+        // Client disconnected
+        if (index !== -1) {
+            rooms[index].player2 = undefined;
+            rooms[index].player2_id = undefined;
+            rooms[index].status = 0;
+
+            // Notice to the server that client is out
+            const player1Socket = io.sockets.sockets.get(rooms[index].player1_id);
+            // Notice Server
+            if (player1Socket) {
+                player1Socket.emit("ROOM", {
+                    status: true,
+                    cmd: 'SIGNAL_ROOM_JOINED',
+                    name: rooms[index].name,
+                    globalMap: rooms[index].map,
+                    role: 'server',
+                    players: [
+                        { player_name: rooms[index].player1, player_id: rooms[index].player1_id, player_state: 1 },
+                        { player_name: rooms[index].player2, player_id: rooms[index].player2_id, player_state: 0 }
+                    ]
+                });
+            }
+
+            console.log("remove client user info");
         }
     });
 });
